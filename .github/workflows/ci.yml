@@ -73,10 +73,7 @@ jobs:
       - name: Run flake8 linting
         run: flake8 app.py --max-line-length=100
 
-      - name: Run app health check
+      - name: Run tests
         run: |
-          python app.py &
-          sleep 3
-          curl -s http://localhost:5000/ | grep -q "Hello, Freebuff!"
-          echo "Health check passed: app responding correctly"
+          python -m unittest test_app -v
 

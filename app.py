@@ -7,9 +7,9 @@ app = Flask(__name__)
 def hello():
     return "Hello, Freebuff! 👋"
 
-@app.router("/healthcheck")
-def heath():
-    return 'Server is healthy!'
+@app.route("/health")
+def health():
+    return "OK"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
