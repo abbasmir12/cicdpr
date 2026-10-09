@@ -42,6 +42,7 @@ test_app:
     - python -c "import app; print('App imports successfully')"
     - pip install flake8 black --quiet
     - flake8 app.py --max-line-length=100
+    - python -m unittest test_app -v
     - echo "All tests passed!"
   only:
     - main
