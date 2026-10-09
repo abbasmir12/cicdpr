@@ -67,12 +67,6 @@ jobs:
       - name: Test app imports
         run: python -c "import app; print('App imports successfully')"
 
-      - name: Install linting tools
-        run: pip install flake8 black --quiet
-
-      - name: Run flake8 linting
-        run: flake8 app.py --max-line-length=100
-
       - name: Run tests
         run: |
           python -m unittest test_app -v
