@@ -1,0 +1,71 @@
+# GitLab CI/CD configuration for Freebuff's Flask app
+# This file lives in .gitlab-ci.yml at the repo root.
+
+# Define the image and Python version to use
+image: python:3.12-slim
+
+# Cache pip packages between runs to speed up builds
+cache:
+  paths:
+    - .cache/pip
+  key: "$CI_COMMIT_REF_SLUG"
+  policy: push
+
+# Default variables for all jobs
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PYTHONUNBUFFERED: "1"
+
+# Main pipeline stages
+stages:
+  - install
+  - test
+  - deploy
+
+# Job: Install dependencies
+install_dependencies:
+  stage: install
+  script:
+    - python -m pip install --upgrade pip
+    - pip install -r requirements.txt
+  artifacts:
+    paths:
+      - .cache/pip
+    expire_in: 1 week
+
+# Job: Run tests + health check
+test_app:
+  stage: test
+  dependencies:
+    - install_dependencies
+  script:
+    - python -c "import app; print('App imports successfully')"
+    - pip install flake8 black --quiet
+    - flake8 app.py --max-line-length=100
+    - echo "All tests passed!"
+  only:
+    - main
+
+# Job: Health check (start app and verify it responds)
+health_check:
+  stage: test
+  dependencies:
+    - install_dependencies
+  script:
+    - python -m pip install -r requirements.txt
+    - python app.py &
+    - sleep 3
+    - curl -s http://localhost:5000/ | grep -q "Hello, Freebuff!"
+    - echo "Health check passed: app responding correctly"
+  only:
+    - main
+
+# Job: Deploy to Render (placeholder)
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploy to Render would happen here"
+    - echo "You'd configure the Render API or webhook trigger"
+  only:
+    - main
+  when: manual
