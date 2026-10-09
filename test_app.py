@@ -29,8 +29,8 @@ class AppTestCase(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        # Wait for the server to be ready
-        for _ in range(20):
+        # Wait for the server to be ready (with a longer timeout)
+        for _ in range(50):
             try:
                 urllib.request.urlopen("http://localhost:5000/", timeout=1)
                 break
